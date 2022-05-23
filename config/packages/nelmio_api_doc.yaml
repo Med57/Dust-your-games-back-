@@ -1,0 +1,87 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Dust Your Games API
+            description: API private !
+            version: 1.0.0
+        components:
+            securitySchemes:
+                bearerAuth:            # arbitrary name for the security scheme this will be use in annotations @Security(name="bearerAuth")
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT 
+        security:
+            - bearerAuth: []
+        # https://swagger.io/docs/specification/paths-and-operations/
+        paths: # documentation de la route pour obtenir le token lexkit
+            /api/login_check:
+                post:
+                    summary: Get your token
+                    description: authenticate method
+                    # https://swagger.io/docs/specification/grouping-operations-with-tags/
+                    tags:
+                        - DyG API Auth
+                    # https://swagger.io/docs/specification/describing-parameters/
+                    requestBody:
+                        description: JSON Object
+                        required: true
+                        content: 
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        username:
+                                            type: string
+                                        password:
+                                            type: string
+                    responses:
+                        '200':
+                            description: JWT Token
+                            content:
+                                application/json:
+                                    schema: 
+                                        type: object
+                                        properties:
+                                            token:
+                                                type: string
+            /api/register:
+                post:
+                    summary: Get your account
+                    description: Register method
+                    tags:
+                        - DyG API Auth
+                    # https://swagger.io/docs/specification/grouping-operations-with-tags/
+                    # https://swagger.io/docs/specification/describing-parameters/
+                    requestBody:
+                        description: JSON Object
+                        required: true
+                        content: 
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        email:
+                                            type: string
+                                        password:
+                                            type: string
+                                        pseudo_name:
+                                            type: string
+                                        year_of_birth:
+                                            type: integer
+                    responses:
+                        '201':
+                            description: Return 201.
+                            content:
+                                application/json:
+                                    schema: 
+                                        type: object
+                                        properties:
+                                            "text" : 
+                                                type: string
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+        disable_default_routes: true
+
+
+       
