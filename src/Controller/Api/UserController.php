@@ -210,8 +210,16 @@ class UserController extends JsonController
     }
 
     /**
-     * @Route("/passwordlost", name="password_lost")
+     * @Route("/passwordlost", name="password_lost", methods={"POST"})
      * 
+     * @OA\Response(
+     *     response=202,
+     *     description="get a new password after lost",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"get_user"}))
+     *  )
+     * )
      */
     public function passwordLost(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $hasher, MailerService $mailer): Response
     {
@@ -222,7 +230,10 @@ class UserController extends JsonController
         $user = $userRepository->findOneBy(["email" => $userContent->email]);
 
         if($user === null){
-            return new Response; // retourné une reponse JSON erreur je sais pas quoi :o)
+            return $this->json(
+                "User not found",
+                Response::HTTP_NOT_FOUND
+            );
         }
 
         $bytes = openssl_random_pseudo_bytes(6);
@@ -239,7 +250,10 @@ class UserController extends JsonController
         $mailer->sendEmailPasswordLost($user, $pass);
     
 
-        return new Response; 
+        return $this->json(
+            $this->json('un mot de passe vous a bien été envoyé.'),
+            Response::HTTP_ACCEPTED,
+        );
         
     }
 
